@@ -1,0 +1,15 @@
+**/target/
+**/.idea/
+**/*.iml
+**/.settings/
+**/.classpath
+**/.project
+**/.vertx/
+**/node_modules/
+.classpath
+.project
+start.sh
+testApp.js
+Dockerfile
+npm-debug.log
+**/.DS_Store
