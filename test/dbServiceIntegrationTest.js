@@ -42,52 +42,6 @@ var dbService = new DbService(TEST_DB_HOST, TEST_DB_NAME);
 
 describe("DBBBB - Integration tests", function () {
 
-    it("should create mobile_mapping table and check if this table exists", function () {
-        this.timeout(10000);
-        return dbService.createMobileMappingTable()
-            .then(function() {
-                return dbService.checkIfMobileMappingTableExists()
-            })
-            .then(function verifyResult(result) {
-                console.log(result)
-                assert.lengthOf(result, 1);
-            }).fail(function onFailure(error) {
-                console.log("ERROR:" + error.stack)
-            });
-    });
-
-    it("should check if single mobile_mapping is inserted into table", function () {
-        this.timeout(10000);
-        return dbService.insertMapping(SAMPLE_SECONDARY_ADDRESS, SAMPLE_REGISTRATION_TOKEN)
-            .then(function() {
-                return dbService.getMappingByAddress(SAMPLE_SECONDARY_ADDRESS)
-            })
-            .then(function verifyResult(result) {
-                console.log(result)
-                assert.equal(result[0].secondaryAddress, SAMPLE_SECONDARY_ADDRESS);
-                assert.equal(result[0].registrationToken, SAMPLE_REGISTRATION_TOKEN);
-            }).fail(function onFailure(error) {
-                console.log("ERROR:" + error.stack)
-            });
-    });
-
-    it("should check if there are 2 mobile_mappings inserted into table", function () {
-        this.timeout(10000);
-        return dbService.insertMapping(SAMPLE_SECONDARY_ADDRESS_2, SAMPLE_REGISTRATION_TOKEN_2)
-            .then(function() {
-                return dbService.getMappings()
-            })
-            .then(function verifyResult(result) {
-                assert.lengthOf(result, 2);
-                console.log(result)
-                //Below asserts are with '||' because order of inserting data is not certain
-                assert.equal(result[1].secondaryAddress == SAMPLE_SECONDARY_ADDRESS || result[1].secondaryAddress == SAMPLE_SECONDARY_ADDRESS_2, true);
-                assert.equal(result[1].registrationToken == SAMPLE_REGISTRATION_TOKEN || result[1].registrationToken == SAMPLE_REGISTRATION_TOKEN_2, true);
-            }).fail(function onFailure(error) {
-                console.log("ERROR:" + error.stack)
-            });
-    });
-
     it("should create user_credentials table and check if this table exists", function () {
         this.timeout(10000);
         return dbService.createUserCredentialsTable()
@@ -104,13 +58,31 @@ describe("DBBBB - Integration tests", function () {
 
     it("should check if single user_credential is inserted into table", function () {
         this.timeout(10000);
-        return dbService.insertUserCredential(SAMPLE_EMAIL, SAMPLE_PRIMARY_ADDRESS)
+        return dbService.insertUserCredential(SAMPLE_EMAIL, SAMPLE_SECONDARY_ADDRESS,SAMPLE_REGISTRATION_TOKEN)
             .then(function() {
                 return dbService.getUserCredentialsByEmail(SAMPLE_EMAIL)
             })
             .then(function verifyResult(result) {
                 console.log(result)
                 assert.equal(result[0].email, SAMPLE_EMAIL);
+                assert.equal(result[0].secondaryAddress, SAMPLE_SECONDARY_ADDRESS);
+                assert.equal(result[0].registrationToken, SAMPLE_REGISTRATION_TOKEN);
+            }).fail(function onFailure(error) {
+                console.log("ERROR:" + error.stack)
+            });
+    });
+
+    it("should check if user primary address is added", function () {
+        this.timeout(10000);
+        return dbService.insertPrimaryAddress(SAMPLE_EMAIL, SAMPLE_PRIMARY_ADDRESS)
+            .then(function() {
+                return dbService.getUserCredentialsByEmail(SAMPLE_EMAIL)
+            })
+            .then(function verifyResult(result) {
+                console.log(result)
+                assert.equal(result[0].email, SAMPLE_EMAIL);
+                assert.equal(result[0].secondaryAddress, SAMPLE_SECONDARY_ADDRESS);
+                assert.equal(result[0].registrationToken, SAMPLE_REGISTRATION_TOKEN);
                 assert.equal(result[0].primaryAddress, SAMPLE_PRIMARY_ADDRESS);
             }).fail(function onFailure(error) {
                 console.log("ERROR:" + error.stack)
@@ -119,7 +91,7 @@ describe("DBBBB - Integration tests", function () {
 
     it("should check if there are 2 user_credentials inserted into table", function () {
         this.timeout(10000);
-        return dbService.insertUserCredential(SAMPLE_EMAIL_2, SAMPLE_PRIMARY_ADDRESS_2)
+        return dbService.insertUserCredential(SAMPLE_EMAIL_2, SAMPLE_SECONDARY_ADDRESS_2,SAMPLE_REGISTRATION_TOKEN_2)
             .then(function() {
                 return dbService.getUserCredentials()
             })
@@ -128,7 +100,7 @@ describe("DBBBB - Integration tests", function () {
                 assert.lengthOf(result, 2);
                 //Below asserts are with '||' because order of inserting data is not certain
                 assert.equal(result[1].email == SAMPLE_EMAIL || result[1].email == SAMPLE_EMAIL_2, true);
-                assert.equal(result[1].primaryAddress == SAMPLE_PRIMARY_ADDRESS || result[1].primaryAddress == SAMPLE_PRIMARY_ADDRESS_2, true);
+                assert.equal(result[1].secondaryAddress == SAMPLE_SECONDARY_ADDRESS || result[1].secondaryAddress == SAMPLE_SECONDARY_ADDRESS_2, true);
             }).fail(function onFailure(error) {
                 console.log("ERROR:" + error.stack)
             });

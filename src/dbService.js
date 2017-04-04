@@ -41,39 +41,20 @@ function DbService(host, database, user, password) {
     });
 }
 
-DbService.prototype.checkIfMobileMappingTableExists = function checkIfMobileMappingTableExists() {
-    return promisify("SHOW TABLES LIKE 'mobileMapping';");
-}
-
-DbService.prototype.createMobileMappingTable = function createMobileMappingTable() {
-    return promisify("CREATE TABLE IF NOT EXISTS mobileMapping (secondaryAddress VARCHAR(100) PRIMARY KEY, registrationToken VARCHAR(256));");
-}
-
-DbService.prototype.insertMapping = function insertMapping(secondaryAddress, registrationToken) {
-    return promisify("INSERT INTO mobileMapping SET ?", {
-        secondaryAddress: secondaryAddress,
-        registrationToken: registrationToken
-    });
-}
-
-DbService.prototype.getMappings = function getMappings() {
-    return promisify("SELECT * FROM mobileMapping");
-}
-
-DbService.prototype.getMappingByAddress = function getMappingByAddress(secondaryAddress) {
-    return promisify("SELECT * FROM mobileMapping WHERE `secondaryAddress` = ?", [secondaryAddress]);
-}
-
 DbService.prototype.checkIfUserCredentialsTableExists = function checkIfUserCredentialsTableExists() {
     return promisify("SHOW TABLES LIKE 'userCredentials';");
 }
 
 DbService.prototype.createUserCredentialsTable = function createUserCredentialsTable() {
-    return promisify("CREATE TABLE IF NOT EXISTS userCredentials (email VARCHAR(100) PRIMARY KEY, primaryAddress VARCHAR(100));");
+    return promisify("CREATE TABLE IF NOT EXISTS userCredentials (email VARCHAR(100) PRIMARY KEY, primaryAddress VARCHAR(100), secondaryAddress VARCHAR(100), registrationToken VARCHAR(256));");
 }
 
-DbService.prototype.insertUserCredential = function insertUserCredential(email, primaryAddress) {
-    return promisify("INSERT INTO userCredentials SET ?", {email: email, primaryAddress: primaryAddress});
+DbService.prototype.insertUserCredential = function insertUserCredential(email, secondaryAddress, registrationToken) {
+    return promisify("INSERT INTO userCredentials SET ?", {email: email, secondaryAddress: secondaryAddress, registrationToken : registrationToken});
+}
+
+DbService.prototype.insertPrimaryAddress = function insertPrimaryAddress(email, primaryAddress) {
+    return promisify("UPDATE userCredentials SET ?", { primaryAddress: primaryAddress, email : email });
 }
 
 DbService.prototype.getUserCredentials = function getUserCredentials() {
