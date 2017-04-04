@@ -72,6 +72,19 @@ describe("DBBBB - Integration tests", function () {
             });
     });
 
+    it("should check if user is retrievable by secondary address", function () {
+        this.timeout(10000);
+        return dbService.getUserCredentialsSecondaryAddress(SAMPLE_SECONDARY_ADDRESS)
+            .then(function verifyResult(result) {
+                console.log(result)
+                assert.equal(result[0].email, SAMPLE_EMAIL);
+                assert.equal(result[0].secondaryAddress, SAMPLE_SECONDARY_ADDRESS);
+                assert.equal(result[0].registrationToken, SAMPLE_REGISTRATION_TOKEN);
+            }).fail(function onFailure(error) {
+                console.log("ERROR:" + error.stack)
+            });
+    });
+
     it("should check if user primary address is added", function () {
         this.timeout(10000);
         return dbService.insertPrimaryAddress(SAMPLE_EMAIL, SAMPLE_PRIMARY_ADDRESS)

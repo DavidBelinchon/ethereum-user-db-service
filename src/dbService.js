@@ -65,6 +65,10 @@ DbService.prototype.getUserCredentialsByEmail = function getUserCredentialsByEma
     return promisify("SELECT * FROM userCredentials WHERE `email` = ?", [email]);
 }
 
+DbService.prototype.getUserCredentialsSecondaryAddress = function getUserCredentialsSecondaryAddress(secondaryAddress) {
+    return promisify("SELECT * FROM userCredentials WHERE `secondaryAddress` = ?", [secondaryAddress]);
+}
+
 function promisify(query, params) {
     var deferred = Q.defer();
     Q.fcall(function () {
