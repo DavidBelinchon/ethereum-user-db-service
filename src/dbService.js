@@ -54,7 +54,7 @@ DbService.prototype.insertUserCredential = function insertUserCredential(email, 
 }
 
 DbService.prototype.insertPrimaryAddress = function insertPrimaryAddress(email, primaryAddress) {
-    return promisify("UPDATE userCredentials SET ?", { primaryAddress: primaryAddress, email : email });
+    return promisify("UPDATE userCredentials SET primaryAddress = ? WHERE email = ?" , [primaryAddress, email]);
 }
 
 DbService.prototype.getUserCredentials = function getUserCredentials() {
